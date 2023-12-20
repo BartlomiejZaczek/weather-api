@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class WindsurfingLocation {
     private String name;
-    private Double temp;
-    private Double wind_speed;
+    private double temperature;
+    private double windSpeed;
 }
