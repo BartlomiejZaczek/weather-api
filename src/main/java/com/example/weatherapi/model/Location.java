@@ -1,12 +1,16 @@
 package com.example.weatherapi.model;
 
-import lombok.Builder;
+import com.opencsv.bean.CsvBindByPosition;
 import lombok.Getter;
 
 @Getter
-@Builder
 public class Location {
+    @CsvBindByPosition(position = 0)
     private String name;
-    private Double temp;
-    private Double wind_speed;
+
+    @CsvBindByPosition(position = 1)
+    private Double latitude;
+
+    @CsvBindByPosition(position = 2)
+    private Double longitude;
 }
