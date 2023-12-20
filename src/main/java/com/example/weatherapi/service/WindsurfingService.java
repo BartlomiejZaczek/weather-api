@@ -7,13 +7,13 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Map;
 
 @org.springframework.stereotype.Service
-public class Service {
+public class WindsurfingService {
     @Value("${api.key}")
     private String API_KEY;
     private final String URL = "https://api.weatherbit.io/v2.0/forecast/daily?city=";
     private final RestTemplate restTemplate;
 
-    public Service(RestTemplate restTemplate) {
+    public WindsurfingService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
