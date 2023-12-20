@@ -9,8 +9,8 @@ import java.util.Map;
 @org.springframework.stereotype.Service
 public class Service {
     @Value("${api.key}")
-    String API_KEY;
-    String URL = "https://api.weatherbit.io/v2.0/forecast/daily?city=";
+    private String API_KEY;
+    private final String URL = "https://api.weatherbit.io/v2.0/forecast/daily?city=";
     private final RestTemplate restTemplate;
 
     public Service(RestTemplate restTemplate) {
@@ -18,7 +18,7 @@ public class Service {
     }
 
     /** Retrieve location data from URL and return as ResponseEntity of Map type */
-    public Map<String, Object> getLocationWeatherDetails(String city) {
+    private Map<String, Object> getLocationWeatherDetails(String city) {
         ResponseEntity<Map> response = restTemplate.getForEntity(
                 URL + city + "&key=" + API_KEY,
                 Map.class);
