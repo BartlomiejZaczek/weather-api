@@ -13,10 +13,9 @@ public class LocationService {
 
     /** Return location List from locations.csv */
     public List<Location> listLocations() throws FileNotFoundException {
-        List<Location> locationList = new CsvToBeanBuilder(new FileReader("src/main/resources/locations.csv"))
+        return new CsvToBeanBuilder<Location>(new FileReader("src/main/resources/locations.csv"))
                 .withType(Location.class)
                 .build()
                 .parse();
-        return locationList;
     }
 }
