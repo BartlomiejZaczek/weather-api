@@ -14,7 +14,7 @@ import java.io.FileNotFoundException;
 public class WindsurfingController {
 
     private final WindsurfingService windsurfingService;
-    @GetMapping("/location")
+    @GetMapping("/api/location")
     public WindsurfingLocation getWindsurfingLocation(@RequestParam String date) throws FileNotFoundException {
         return windsurfingService.getWindsurfingLocation(date);
     }
