@@ -16,7 +16,7 @@ import java.util.Map;
 public class WindsurfingService {
     @Value("${api.key}")
     private String API_KEY;
-    private final String URL = "https://api.weatherbit.io/v2.0/forecast/daily?city=";
+    private final String URL = "https://api.weatherbit.io/v2.0/forecast/daily?";
     private final RestTemplate restTemplate;
     private final LocationService locationService;
 
@@ -27,8 +27,12 @@ public class WindsurfingService {
 
     /** Retrieve location data from URL and return as ResponseEntity of Map type */
     private Map<String, Object> getLocationWeatherDetails(String city, Double latitude, Double longitude) {
+        String location = "";
+        if (city != null) {
+            location = ("city=" + city + "&");
+        }
         ResponseEntity<Map> response = restTemplate.getForEntity(
-                URL + city + "&lat=" + latitude + "&lon=" + longitude + "&key=" + API_KEY,
+                URL + location + "lat=" + latitude + "&lon=" + longitude + "&key=" + API_KEY,
                 Map.class);
         return response.getBody();
     }
@@ -51,26 +55,28 @@ public class WindsurfingService {
                     location.getName(),
                     location.getLatitude(),
                     location.getLongitude());
-            List<Map<String, Object>> data = (List<Map<String, Object>>) weatherDetails.get("data");
+            if (weatherDetails != null) {
+                List<Map<String, Object>> data = (List<Map<String, Object>>) weatherDetails.get("data");
 
-            for (Map<String, Object> details : data) {
-                if (date.equals(details.get("valid_date"))) {
-                    // Check selection criteria
-                    double temp = ((Number) details.get("temp")).doubleValue();
-                    double wind_spd = ((Number) details.get("wind_spd")).doubleValue();
-                    if (temp < 5 || temp > 35 || wind_spd < 5 || wind_spd > 18) {
+                for (Map<String, Object> details : data) {
+                    if (date.equals(details.get("valid_date"))) {
+                        // Check selection criteria
+                        double temp = ((Number) details.get("temp")).doubleValue();
+                        double wind_spd = ((Number) details.get("wind_spd")).doubleValue();
+//                    if (temp < 5 || temp > 35 || wind_spd < 5 || wind_spd > 18) {
+//                        break;
+//                    }
+                        // Calculate location value
+                        double city_conditions = wind_spd * 3 + temp;
+
+                        if (city_conditions > conditions) {
+                            name = weatherDetails.get("city_name").toString();
+                            temperature = temp;
+                            windSpeed = wind_spd;
+                            conditions = city_conditions;
+                        }
                         break;
                     }
-                    // Calculate location value
-                    double city_conditions = wind_spd*3 + temp;
-
-                    if (city_conditions > conditions) {
-                        name = location.getName();
-                        temperature = temp;
-                        windSpeed = wind_spd;
-                        conditions = city_conditions;
-                    }
-                    break;
                 }
             }
         }

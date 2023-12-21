@@ -6,11 +6,11 @@ import lombok.Getter;
 @Getter
 public class Location {
     @CsvBindByPosition(position = 0)
-    private String name;
-
-    @CsvBindByPosition(position = 1)
     private Double latitude;
 
-    @CsvBindByPosition(position = 2)
+    @CsvBindByPosition(position = 1)
     private Double longitude;
+
+    @CsvBindByPosition(position = 2)
+    private String name;
 }
