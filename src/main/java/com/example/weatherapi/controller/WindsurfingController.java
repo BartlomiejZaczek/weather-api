@@ -15,7 +15,7 @@ public class WindsurfingController {
 
     private final WindsurfingService windsurfingService;
     @GetMapping("/location")
-    WindsurfingLocation getWindsurfingLocation(@RequestParam String date) throws FileNotFoundException {
+    public WindsurfingLocation getWindsurfingLocation(@RequestParam String date) throws FileNotFoundException {
         return windsurfingService.getWindsurfingLocation(date);
     }
 }
