@@ -26,9 +26,9 @@ public class WindsurfingService {
     }
 
     /** Retrieve location data from URL and return as ResponseEntity of Map type */
-    private Map<String, Object> getLocationWeatherDetails(String city) {
+    private Map<String, Object> getLocationWeatherDetails(String city, Double latitude, Double longitude) {
         ResponseEntity<Map> response = restTemplate.getForEntity(
-                URL + city +"&key=" + API_KEY,
+                URL + city + "&lat=" + latitude + "&lon=" + longitude + "&key=" + API_KEY,
                 Map.class);
         return response.getBody();
     }
@@ -47,7 +47,10 @@ public class WindsurfingService {
 
         for (Location location : locationList) {
             // Retrieve weather details for specific location
-            Map<String, Object> weatherDetails = getLocationWeatherDetails(location.getName());
+            Map<String, Object> weatherDetails = getLocationWeatherDetails(
+                    location.getName(),
+                    location.getLatitude(),
+                    location.getLongitude());
             List<Map<String, Object>> data = (List<Map<String, Object>>) weatherDetails.get("data");
 
             for (Map<String, Object> details : data) {
