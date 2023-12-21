@@ -13,6 +13,6 @@ Run application
 Application is run on default port 8080
 
 Weatherbit Forecast API key should be set in application.properties file<br /><br />
-Available locations are located at src/main/properties in locations.csv. Locations may be modified starting from new line as follows: CITY,LATITUDE,LONGITUDE<br />
-Geographical coordinates are taken in account only when city is not valid<br /><br />
+Available locations are located at src/main/properties in locations.csv. Locations may be modified starting from new line as follows: LATITUDE,LONGITUDE,CITY<br />
+Application will first find location by city. If city parameter is ommited and location is instead specified as LATITUDE,LONGITUDE location will be specified by geographical coordinates<br /><br />
 Endpoints are accessible through Swagger documentation at endpoint: ```http://localhost:8080/api/docs```
