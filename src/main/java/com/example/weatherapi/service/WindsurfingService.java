@@ -2,6 +2,8 @@ package com.example.weatherapi.service;
 
 import com.example.weatherapi.model.Location;
 import com.example.weatherapi.model.WindsurfingLocation;
+import com.example.weatherapi.utils.DateValidator;
+import com.example.weatherapi.utils.InvalidDateException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -26,13 +28,16 @@ public class WindsurfingService {
     /** Retrieve location data from URL and return as ResponseEntity of Map type */
     private Map<String, Object> getLocationWeatherDetails(String city) {
         ResponseEntity<Map> response = restTemplate.getForEntity(
-                URL + city + "&key=" + API_KEY,
+                URL + city +"&key=" + API_KEY,
                 Map.class);
         return response.getBody();
     }
 
     /** Choose and return best suiting location for windsurfing */
     public WindsurfingLocation getWindsurfingLocation (String date) throws FileNotFoundException {
+        if (!DateValidator.isValidDate(date)) {
+            throw new InvalidDateException("Invalid date");
+        }
         String name = "";
         double temperature = 0;
         double windSpeed = 0;
