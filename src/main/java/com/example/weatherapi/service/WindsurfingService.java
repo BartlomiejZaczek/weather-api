@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
+import java.util.stream.Stream;
 
 @org.springframework.stereotype.Service
 public class WindsurfingService {
@@ -24,11 +26,10 @@ public class WindsurfingService {
         this.restTemplate = restTemplate;
         this.locationService = locationService;
     }
-
     /**
      * Retrieve location data from URL and return as ResponseEntity of Map type
      */
-    private Map<String, Object> getLocationWeatherDetails(String city, Double latitude, Double longitude) {
+    protected Map<String, Object> getLocationWeatherDetails(String city, Double latitude, Double longitude) {
         String location = "";
         if (city != null) {
             location = ("city=" + city + "&");
@@ -38,7 +39,6 @@ public class WindsurfingService {
                 Map.class);
         return response.getBody();
     }
-
     /**
      * Choose and return best suiting location for windsurfing
      */
@@ -46,48 +46,40 @@ public class WindsurfingService {
         if (!DateValidator.isValidDate(date)) {
             throw new InvalidDateException("Invalid date");
         }
-        String name = "";
-        double temperature = 0;
-        double windSpeed = 0;
-        double conditions = 0;
         // List all locations
         List<Location> locationList = locationService.listLocations();
-
-        for (Location location : locationList) {
-            // Retrieve weather details for specific location
-            Map<String, Object> weatherDetails = getLocationWeatherDetails(
-                    location.getName(),
-                    location.getLatitude(),
-                    location.getLongitude());
-            if (weatherDetails != null) {
-                List<Map<String, Object>> data = (List<Map<String, Object>>) weatherDetails.get("data");
-
-                for (Map<String, Object> details : data) {
-                    if (date.equals(details.get("valid_date"))) {
+        // Retrieve weather details for specific location
+        return locationList.stream()
+                .flatMap(location -> {
+                    Map<String, Object> weatherDetails = getLocationWeatherDetails(
+                            location.getName(),
+                            location.getLatitude(),
+                            location.getLongitude());
+                    if (weatherDetails != null) {
+                        List<Map<String, Object>> data = (List<Map<String, Object>>) weatherDetails.get("data");
                         // Check selection criteria
-                        double temp = ((Number) details.get("temp")).doubleValue();
-                        double wind_spd = ((Number) details.get("wind_spd")).doubleValue();
-//                    if (temp < 5 || temp > 35 || wind_spd < 5 || wind_spd > 18) {
-//                        break;
-//                    }
-                        // Calculate location value
-                        double city_conditions = wind_spd * 3 + temp;
-
-                        if (city_conditions > conditions) {
-                            name = weatherDetails.get("city_name").toString();
-                            temperature = temp;
-                            windSpeed = wind_spd;
-                            conditions = city_conditions;
-                        }
-                        break;
+                        return data.stream()
+                                .filter(details -> date.equals(details.get("valid_date")))
+                                .filter(details -> {
+                                    double temp = ((Number) details.get("temp")).doubleValue();
+                                    double wind_spd = ((Number) details.get("wind_spd")).doubleValue();
+                                    return !(temp < 5 || temp > 35 || wind_spd < 5 || wind_spd > 18);
+                                })
+                                .map(details -> {
+                                    double temp = ((Number) details.get("temp")).doubleValue();
+                                    double wind_spd = ((Number) details.get("wind_spd")).doubleValue();
+                                    String cityName = weatherDetails.get("city_name").toString();
+                                    return WindsurfingLocation.builder()
+                                            .name(cityName)
+                                            .temperature(temp)
+                                            .windSpeed(wind_spd)
+                                            .build();
+                                });
                     }
-                }
-            }
-        }
-        return WindsurfingLocation.builder()
-                .name(name)
-                .temperature(temperature)
-                .windSpeed(windSpeed)
-                .build();
+                    return Stream.empty();
+                })
+                // Choose the best location
+                .max(Comparator.comparingDouble(location -> location.getWindSpeed() * 3 + location.getTemperature()))
+                .orElse(WindsurfingLocation.builder().build());
     }
 }
