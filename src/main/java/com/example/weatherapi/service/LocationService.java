@@ -11,7 +11,9 @@ import java.util.List;
 @Service
 public class LocationService {
 
-    /** Return location List from locations.csv */
+    /**
+     * Return location List from locations.csv
+     */
     public List<Location> listLocations() throws FileNotFoundException {
         return new CsvToBeanBuilder<Location>(new FileReader("src/main/resources/locations.csv"))
                 .withType(Location.class)

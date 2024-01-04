@@ -25,7 +25,9 @@ public class WindsurfingService {
         this.locationService = locationService;
     }
 
-    /** Retrieve location data from URL and return as ResponseEntity of Map type */
+    /**
+     * Retrieve location data from URL and return as ResponseEntity of Map type
+     */
     private Map<String, Object> getLocationWeatherDetails(String city, Double latitude, Double longitude) {
         String location = "";
         if (city != null) {
@@ -37,8 +39,10 @@ public class WindsurfingService {
         return response.getBody();
     }
 
-    /** Choose and return best suiting location for windsurfing */
-    public WindsurfingLocation getWindsurfingLocation (String date) throws FileNotFoundException {
+    /**
+     * Choose and return best suiting location for windsurfing
+     */
+    public WindsurfingLocation getWindsurfingLocation(String date) throws FileNotFoundException {
         if (!DateValidator.isValidDate(date)) {
             throw new InvalidDateException("Invalid date");
         }
