@@ -17,4 +17,4 @@ Available locations are located at src/main/properties in locations.csv. Locatio
 Application will first find location by city. If city parameter is ommited and location is instead specified as LATITUDE,LONGITUDE location will be specified by geographical coordinates<br /><br />
 Endpoints are accessible through Swagger documentation at endpoint: ```http://localhost:8080/api/docs```
 <br /><br />
-**For development purposes use dev profile on port 8081. Active profile can be changed in application.properties.**
+**For development purposes use dev profile on port 8081. Active profile can be changed in application.properties. Only "2024-01-10" date is available on dev.**
